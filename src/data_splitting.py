@@ -52,21 +52,6 @@ x_train_final, y_train_final, x_val_final, y_val_final = split_train_val(
     x_train_subset, y_train_subset
 )
 
-# One-hot encoding function
-def one_hot_encode(labels, num_classes=10):
-    """
-    Converts numerical labels into one-hot encoded vectors.
-    """
-    encoded = np.zeros((labels.shape[0], num_classes))
-    for i, label in enumerate(labels):
-        encoded[i, label] = 1
-    return encoded
-
-# One-hot encode the labels after all splits
-y_train_encoded = one_hot_encode(y_train_final)
-y_val_encoded = one_hot_encode(y_val_final)
-y_test_encoded = one_hot_encode(y_test_subset)
-
 # Save final datasets
 np.savez_compressed('./data/prepared/mnist_20_final.npz', 
                     x_train=x_train_final, y_train=y_train_final, 
