@@ -30,8 +30,8 @@ def resize_images(images, new_size=(14, 14)):
     return resized_images
 
 # Resize train and test images
-x_train_resized = resize_images(x_train, new_size=(18, 18))
-x_test_resized = resize_images(x_test, new_size=(18, 18))
+x_train_resized = resize_images(x_train, new_size=(20, 20))
+x_test_resized = resize_images(x_test, new_size=(20, 20))
 
 # Save the resized dataset to the processed folder
 np.savez_compressed('./data/processed/mnist_resized.npz', 
