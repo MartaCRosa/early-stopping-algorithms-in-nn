@@ -37,6 +37,21 @@ x_train_subset, y_train_subset, x_test_subset, y_test_subset = subset_data(
     x_train_resized, y_train, n_train=10000, n_test=2500
 )
 
+# Split data into training and validation sets (80-20)
+def split_train_val(x_train, y_train, val_ratio=0.2, random_seed=42):
+    """
+    Splits the training data into train and validation sets.
+    """
+    x_train_final, x_val_final, y_train_final, y_val_final = train_test_split(
+        x_train, y_train, test_size=val_ratio, random_state=random_seed
+    )
+    return x_train_final, y_train_final, x_val_final, y_val_final
+
+# Perform train/validation split
+x_train_final, y_train_final, x_val_final, y_val_final = split_train_val(
+    x_train_subset, y_train_subset
+)
+
 # One-hot encoding function
 def one_hot_encode(labels, num_classes=10):
     """
@@ -47,36 +62,19 @@ def one_hot_encode(labels, num_classes=10):
         encoded[i, label] = 1
     return encoded
 
-# One-hot encode the labels
-y_train_encoded = one_hot_encode(y_train_subset)
+# One-hot encode the labels after all splits
+y_train_encoded = one_hot_encode(y_train_final)
+y_val_encoded = one_hot_encode(y_val_final)
 y_test_encoded = one_hot_encode(y_test_subset)
-
-# Split data into training, validation, and test sets
-def split_and_shuffle_data(x, y, train_ratio=0.7, val_ratio=0.1, test_ratio=0.2, random_seed=42):
-    """
-    Splits and shuffles data into train, validation, and test sets.
-    """
-    # First split into training + (validation + test)
-    x_train, x_temp, y_train, y_temp = train_test_split(x, y, test_size=(1 - train_ratio), random_state=random_seed)
-    # Further split temp into validation and test
-    val_ratio_adjusted = val_ratio / (val_ratio + test_ratio)
-    x_val, x_test, y_val, y_test = train_test_split(x_temp, y_temp, test_size=(1 - val_ratio_adjusted), random_state=random_seed)
-
-    return x_train, y_train, x_val, y_val, x_test, y_test
-
-# Perform split
-x_train_final, y_train_final, x_val_final, y_val_final, x_test_final, y_test_final = split_and_shuffle_data(
-    x_train_subset, y_train_encoded
-)
 
 # Save final datasets
 np.savez_compressed('./data/prepared/mnist_20_final.npz', 
                     x_train=x_train_final, y_train=y_train_final, 
                     x_val=x_val_final, y_val=y_val_final, 
-                    x_test=x_test_final, y_test=y_test_final)
+                    x_test=x_test_subset, y_test=y_test_subset)
 
 # Print results
 print("Data preparation completed and saved:")
 print(f"Training set: {x_train_final.shape[0]} samples")
 print(f"Validation set: {x_val_final.shape[0]} samples")
-print(f"Test set: {x_test_final.shape[0]} samples")
+print(f"Test set: {x_test_subset.shape[0]} samples")

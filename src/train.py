@@ -16,7 +16,7 @@ y_test = data['y_test']
 # Parameters
 input_dim = x_train.shape[1]
 output_dim = 10
-hidden_dimensions = [32, 64, 128, 256, 512]
+hidden_dimensions = 32 #64, 128, 256, 512
 
 # To track metrics
 results = []
