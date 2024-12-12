@@ -87,9 +87,9 @@ print(f"  MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}")
 print(f"  Time Taken: {time_taken:.2f} seconds")
 
 # Generate a unique identifier for the current experiment parameters
-experiment_name = f"res_RS18_bn{batch_size}_lr0.001"
-filename_npy = f"./results//RS18/{experiment_name}.npy"
-filename_txt = f"./results/metrics//RS18/{experiment_name}.txt"
+experiment_name = f"res_RS20_bn{batch_size}_lr0.001"
+filename_npy = f"./results/RS20/{experiment_name}.npy"
+filename_txt = f"./results/metrics/RS20/{experiment_name}.txt"
 
 # Save results as numpy array
 np.save(filename_npy, results)
@@ -114,5 +114,5 @@ plt.title(f"Loss Trend Across Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig(f'./results/plots/RS18/loss_{experiment_name}.png')
+plt.savefig(f'./results/plots/RS20/loss_{experiment_name}.png')
 plt.show()
