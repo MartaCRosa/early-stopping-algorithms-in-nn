@@ -1,0 +1,6 @@
+=====================
+Time Taken: 84.98 seconds
+Accuracy ~ Std: 0.9556 ~ 0.0591
+Precision ~ Std: 0.9556 ~ 0.0813
+Recall~ Std: 0.9556 ~ 0.1287
+MSE ~ Std: 0.7644 ~ 0.0100
