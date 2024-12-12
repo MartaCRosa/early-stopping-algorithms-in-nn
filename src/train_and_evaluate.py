@@ -6,7 +6,7 @@ from model import create_model
 from keras.utils import to_categorical 
 
 # Load prepared dataset
-prepared_data_path = './data/prepared/mnist_20_final.npz'
+prepared_data_path = './data/prepared/mnist_14_final.npz'
 data = np.load(prepared_data_path)
 x_train = data['x_train']
 y_train = data['y_train']
@@ -27,7 +27,7 @@ output_dim = 10  # Digits 0-9
 # Run one experiment at a time
 hidden_nodes = 32  # 64, 128, 256, 512
 batch_size = 32  # 64, 128
-epochs = 200
+epochs = 150
 
 results = []
 
@@ -58,7 +58,7 @@ mse = mean_squared_error(y_test_labels, y_pred_labels)
 
 # Store results
 results.append({
-    'hidden_nodes': hidden_nodes,
+    #'hidden_nodes': hidden_nodes,
     'accuracy': accuracy,
     'precision': precision,
     'recall': recall,
@@ -66,17 +66,19 @@ results.append({
     'time': time_taken
 })
 
-# Save results as numpy array
-np.save('./results/metrics.npy', results)
-
-# Generate a unique identifier for the current experiment parameters
-experiment_name = f"hidden_{hidden_nodes}_batch_{batch_size}_learning_rate_"
-
 # Calculate standard deviation for each metric across the runs
 accuracy_std = np.std([res['accuracy'] for res in results])
 precision_std = np.std([res['precision'] for res in results])
 recall_std = np.std([res['recall'] for res in results])
 mse_std = np.std([res['mse'] for res in results])
+
+# Generate a unique identifier for the current experiment parameters
+experiment_name = f"res_RS14_bn{batch_size}_lr0.0005"
+filename_npy = f"results_{experiment_name}.npy"
+filename_txt = f"results_{experiment_name}.txt"
+
+# Save results as numpy array
+np.save(filename_npy, results)
 
 # Print the results
 print(f"Results for {hidden_nodes} hidden nodes:")
@@ -87,16 +89,15 @@ print(f"  MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}")
 print(f"  Time Taken: {time_taken:.2f} seconds")
 
 # Save results to a file
-with open('./results/experiment_results.txt', 'w') as result_file:
-    result_file.write("Experiment Results\n")
+with open(filename_txt, 'w') as result_file:
     result_file.write("=====================\n")
-    result_file.write(f"Input Dimensions: {input_dim}\n")
-    result_file.write(f"Batch Size: {batch_size}\n")
-    result_file.write(f"Hidden Layer Nodes: {hidden_nodes}\n")
+    #result_file.write(f"Input Dimensions: {input_dim}\n")
+    #result_file.write(f"Batch Size: {batch_size}\n")
+    #result_file.write(f"Hidden Layer Nodes: {hidden_nodes}\n")
     result_file.write(f"Time Taken: {time_taken:.2f} seconds\n")
     result_file.write(f"Accuracy ~ Std: {accuracy:.4f} ~ {accuracy_std:.4f}\n")
     result_file.write(f"Precision ~ Std: {precision:.4f} ~ {precision_std:.4f}\n")
-    result_file.write(f"Recall: {recall:.4f}\n")
+    result_file.write(f"Recall~ Std: {recall:.4f} ~ {recall_std:.4f}\n")
     result_file.write(f"MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}\n")
 
 # Plot Error Trends (MSE)
@@ -107,5 +108,5 @@ plt.title(f"Loss Trend Across Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig(f'./results/loss_trends_{experiment_name}.png')
+plt.savefig(f'./results/plots/loss_{experiment_name}.png')
 plt.show()
