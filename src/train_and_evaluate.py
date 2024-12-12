@@ -6,7 +6,7 @@ from model import create_model
 from keras.utils import to_categorical 
 
 # Load prepared dataset
-prepared_data_path = './data/prepared/mnist_14_final.npz'
+prepared_data_path = './data/prepared/mnist_18_final.npz'
 data = np.load(prepared_data_path)
 x_train = data['x_train']
 y_train = data['y_train']
@@ -25,9 +25,9 @@ input_dim = x_train.shape[1]  # The dimension also needs to be 1D
 output_dim = 10  # Digits 0-9
 
 # Run one experiment at a time
-hidden_nodes = 32  # 64, 128, 256, 512
-batch_size = 32  # 64, 128
-epochs = 50
+hidden_nodes = 32  # 32 64, 128, 256, 512
+batch_size = 32  # 32 64, 128
+epochs = 150
 
 results = []
 
@@ -87,9 +87,9 @@ print(f"  MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}")
 print(f"  Time Taken: {time_taken:.2f} seconds")
 
 # Generate a unique identifier for the current experiment parameters
-experiment_name = f"res_RS14_bn{batch_size}_lr0.0005"
-filename_npy = f"./results/{experiment_name}.npy"
-filename_txt = f"./results/metrics/{experiment_name}.txt"
+experiment_name = f"res_RS18_bn{batch_size}_lr0.001"
+filename_npy = f"./results//RS18/{experiment_name}.npy"
+filename_txt = f"./results/metrics//RS18/{experiment_name}.txt"
 
 # Save results as numpy array
 np.save(filename_npy, results)
@@ -114,5 +114,5 @@ plt.title(f"Loss Trend Across Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig(f'./results/plots/loss_{experiment_name}.png')
+plt.savefig(f'./results/plots/RS18/loss_{experiment_name}.png')
 plt.show()
