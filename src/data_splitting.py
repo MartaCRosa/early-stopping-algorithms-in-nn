@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from skimage.transform import resize
 
 # Paths to processed data
-processed_data_path = './data/processed/mnist_20_resized.npz'
+processed_data_path = './data/processed/mnist_resized.npz'
 
 # Load processed dataset
 data = np.load(processed_data_path)
@@ -53,7 +53,7 @@ x_train_final, y_train_final, x_val_final, y_val_final = split_train_val(
 )
 
 # Save final datasets
-np.savez_compressed('./data/prepared/mnist_20_final.npz', 
+np.savez_compressed('./data/prepared/mnist_final.npz', 
                     x_train=x_train_final, y_train=y_train_final, 
                     x_val=x_val_final, y_val=y_val_final, 
                     x_test=x_test_subset, y_test=y_test_subset)

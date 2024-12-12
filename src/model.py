@@ -13,10 +13,10 @@ def create_model(input_dim, hidden_nodes, output_dim, activation='sigmoid'):
               kernel_initializer=RandomNormal(mean=0.0, stddev=0.05))
     ])
 
-    learning_rate = 0.001  # 0.001 0.0005
+    learning_rate = 0.0005  # 0.001 0.0005
 
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate),  # RProp optimizer
+        optimizer=Adam(learning_rate=learning_rate),  # adam optimizer
         loss='categorical_crossentropy',
         metrics=['accuracy', 'precision', 'recall', 'mse']
     )
