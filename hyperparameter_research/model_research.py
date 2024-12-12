@@ -11,11 +11,12 @@ def create_model(input_dim, hidden_nodes, output_dim, activation='sigmoid'):
         Dense(output_dim, activation='softmax', kernel_initializer=RandomNormal(mean=0.0, stddev=0.05))
     ])
 
-    learning_rate = 0.001
+    learning_rate = 0.001  # 0.001 0.0005
 
     model.compile(
-        optimizer=Adam(learning_rate=learning_rate),
+        optimizer=Adam(learning_rate=learning_rate),  # Adam instead of Resilient Backpropagation
         loss='categorical_crossentropy',
-        metrics=['accuracy', 'precision', 'recall', 'mse']
+        metrics=['accuracy', 'precision', 'recall', 'mse'] # Important to keep to later calculate std
     )
     return model
+

@@ -7,12 +7,10 @@ The MNIST dataset is not included in this repository due to file size limitation
 - [MNIST Dataset (Train & Test CSV)](https://www.kaggle.com/competitions/digit-recognizer/data)
 
 
-check the metrics and if they are best or average
+KEEP MODELS RUN
 
 TOPIC 8:
-Use resilient backpropagation (RProp) as the weight update algorithm (batch 
-update). 
-Study the learning process of a neural network (e.g., epochs required for learning, 
+ Study the learning process of a neural network (e.g., epochs required for learning, 
 error trend on training and validation sets, accuracy on the test set) with a single layer of 
 internal nodes and using the sigmoid activation function, varying the early-stopping 
 criterion. 

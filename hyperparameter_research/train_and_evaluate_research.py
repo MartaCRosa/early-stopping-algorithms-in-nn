@@ -81,8 +81,8 @@ print(f"  MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}")
 print(f"  Time Taken: {time_taken:.2f} seconds")
 
 experiment_name = f"res_RS14_bn{batch_size}_lr0.001"
-filename_npy = f"./results/RS14/{experiment_name}.npy"
-filename_txt = f"./results/metrics/RS14/{experiment_name}.txt"
+filename_npy = f"./hyperparameter_research/results/RS14/{experiment_name}.npy"
+filename_txt = f"./hyperparameter_research/results/metrics/RS14/{experiment_name}.txt"
 
 # Save results as numpy array
 np.save(filename_npy, results)
@@ -90,7 +90,6 @@ np.save(filename_npy, results)
 # Save results to a file
 with open(filename_txt, 'w') as result_file:
     result_file.write("=====================\n")
-    result_file.write(f"Hidden Layer Nodes: {hidden_nodes}\n")
     result_file.write(f"Time Taken: {time_taken:.2f} seconds\n")
     result_file.write(f"Accuracy ~ Std: {accuracy:.4f} ~ {accuracy_std:.4f}\n")
     result_file.write(f"Precision ~ Std: {precision:.4f} ~ {precision_std:.4f}\n")
@@ -105,5 +104,5 @@ plt.title(f"Loss Trend Across Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig(f'./results/plots/RS14/loss_{experiment_name}.png')
+plt.savefig(f'./hyperparameter_research/results/plots/RS14/loss_{experiment_name}.png')
 plt.show()

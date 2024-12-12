@@ -1,5 +1,6 @@
 data/
-results/RS14
-results/RS18
-results/RS20
+hyperparameter_research/results/RS14
+hyperparameter_research/results/RS18
+hyperparameter_research/results/RS20
+hyperparameter_research/results/RS28
 src/__pycache__/model.cpython-311.pyc
