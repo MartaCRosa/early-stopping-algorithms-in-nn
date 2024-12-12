@@ -2,7 +2,7 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.initializers import RandomNormal
-from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.optimizers import Adam
 
 def create_model(input_dim, hidden_nodes, output_dim, activation='sigmoid'):
     
@@ -16,9 +16,9 @@ def create_model(input_dim, hidden_nodes, output_dim, activation='sigmoid'):
     learning_rate = 0.0005  # 0.001 0.005
 
     model.compile(
-        optimizer=RMSprop(learning_rate=learning_rate),  # RProp optimizer
+        optimizer=Adam(learning_rate=learning_rate),  # RProp optimizer
         loss='categorical_crossentropy',
-        metrics=['accuracy', 'precision', 'recall']
+        metrics=['accuracy', 'precision', 'recall', 'mse']
     )
     return model
 

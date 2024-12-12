@@ -27,7 +27,7 @@ output_dim = 10  # Digits 0-9
 # Run one experiment at a time
 hidden_nodes = 32  # 64, 128, 256, 512
 batch_size = 32  # 64, 128
-epochs = 150
+epochs = 50
 
 results = []
 
@@ -66,19 +66,17 @@ results.append({
     'time': time_taken
 })
 
-# Calculate standard deviation for each metric across the runs
-accuracy_std = np.std([res['accuracy'] for res in results])
-precision_std = np.std([res['precision'] for res in results])
-recall_std = np.std([res['recall'] for res in results])
-mse_std = np.std([res['mse'] for res in results])
+# Append per-epoch metrics to lists (from history)
+epoch_accuracies = history.history['accuracy']
+epoch_precisions = history.history.get('precision', [])
+epoch_recalls = history.history.get('recall', [])
+epoch_mses = history.history.get('mse', [])
 
-# Generate a unique identifier for the current experiment parameters
-experiment_name = f"res_RS14_bn{batch_size}_lr0.0005"
-filename_npy = f"results_{experiment_name}.npy"
-filename_txt = f"results_{experiment_name}.txt"
-
-# Save results as numpy array
-np.save(filename_npy, results)
+# Calculate standard deviation for each metric across epochs
+accuracy_std = np.std(epoch_accuracies)
+precision_std = np.std(epoch_precisions) if epoch_precisions else 0
+recall_std = np.std(epoch_recalls) if epoch_recalls else 0
+mse_std = np.std(epoch_mses) if epoch_mses else 0
 
 # Print the results
 print(f"Results for {hidden_nodes} hidden nodes:")
@@ -87,6 +85,14 @@ print(f"  Precision ~ Std: {precision:.4f} ~ {precision_std:.4f}")
 print(f"  Recall ~ Std: {recall:.4f} ~ {recall_std:.4f}")
 print(f"  MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}")
 print(f"  Time Taken: {time_taken:.2f} seconds")
+
+# Generate a unique identifier for the current experiment parameters
+experiment_name = f"res_RS14_bn{batch_size}_lr0.0005"
+filename_npy = f"./results/{experiment_name}.npy"
+filename_txt = f"./results/metrics/{experiment_name}.txt"
+
+# Save results as numpy array
+np.save(filename_npy, results)
 
 # Save results to a file
 with open(filename_txt, 'w') as result_file:
