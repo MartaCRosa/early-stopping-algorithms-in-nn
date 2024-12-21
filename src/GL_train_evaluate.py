@@ -25,7 +25,7 @@ output_dim = 10  # The output are the digits 0-9
 hidden_nodes = 32  # 32 64, 128, 256, 512
 batch_size = 32
 epochs = 150
-gl_threshold = 2  # Generalization Loss (GL) threshold in %
+gl_threshold = 2  # Generalization loss threshold in %
 
 
 results = []
@@ -33,14 +33,14 @@ start_time = time.time()
 
 model = create_model(input_dim, hidden_nodes, output_dim)
 
-# Initialize variables for GL stopping
+# Initialize variables for GL early stopping
 best_val_loss = np.inf  # Tracks the best validation loss seen so far
-history = {'accuracy': [], 'val_accuracy': [], 'loss': [], 'val_loss': [], 'precision': [], 'recall': [], 'mse': []}
+history = {'val_accuracy': [], 'loss': [], 'val_loss': [], 'accuracy': [], 'precision': [], 'recall': [], 'mse': []}
 
 for epoch in range(epochs):
     print(f"\nEpoch {epoch + 1}/{epochs}")
     
-    # Train for one epoch
+    # Train for each epoch
     train_history = model.fit(
         x_train, y_train,
         batch_size=batch_size,
@@ -52,7 +52,6 @@ for epoch in range(epochs):
     # Retrieve current metrics from the model
     train_loss = train_history.history['loss'][0]
     val_loss = train_history.history['val_loss'][0]
-    train_acc = train_history.history['accuracy'][0]
     val_acc = train_history.history['val_accuracy'][0]
     
     # Compute validation predictions and metrics
@@ -63,15 +62,14 @@ for epoch in range(epochs):
     val_mse = mean_squared_error(val_true, val_preds)
     
     # Append to history
-    history['accuracy'].append(train_acc)
-    history['val_accuracy'].append(val_acc)
     history['loss'].append(train_loss)
     history['val_loss'].append(val_loss)
+    history['accuracy'].append(val_acc)
     history['precision'].append(val_precision)
     history['recall'].append(val_recall)
     history['mse'].append(val_mse)
     
-    # Generalization Loss Calculation
+    # Generalization loss calculation according to the article
     best_val_loss = min(best_val_loss, val_loss)
     generalization_loss = 100 * (val_loss / best_val_loss - 1)
     print(f"Generalization Loss (GL): {generalization_loss:.2f}%")
@@ -83,7 +81,7 @@ for epoch in range(epochs):
 time_taken = time.time() - start_time
 
 # Track the number of the last completed epoch
-last_epoch = epoch + 1  # Epoch is zero-based; adjust to one-based for reporting.
+last_epoch = epoch + 1
 
 # Evaluate on test data
 y_pred = model.predict(x_test)
