@@ -4,3 +4,5 @@ hyperparameter_research/results/RS18
 hyperparameter_research/results/RS20
 hyperparameter_research/results/RS28
 src/__pycache__/model.cpython-311.pyc
+results/
+

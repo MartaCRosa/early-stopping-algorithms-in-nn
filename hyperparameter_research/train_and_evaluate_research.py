@@ -68,9 +68,9 @@ epoch_recalls = history.history.get('recall', [])
 epoch_mses = history.history.get('mse', [])
 
 accuracy_std = np.std(epoch_accuracies)
-precision_std = np.std(epoch_precisions) if epoch_precisions else 0
-recall_std = np.std(epoch_recalls) if epoch_recalls else 0
-mse_std = np.std(epoch_mses) if epoch_mses else 0
+precision_std = np.std(epoch_precisions)
+recall_std = np.std(epoch_recalls)
+mse_std = np.std(epoch_mses)
 
 # Print the results
 print(f"Results for {hidden_nodes} hidden nodes:")
@@ -100,7 +100,7 @@ with open(filename_txt, 'w') as result_file:
 plt.figure(figsize=(10, 6))
 plt.plot(range(epochs), history.history['loss'], label='Training Loss')
 plt.plot(range(epochs), history.history['val_loss'], label='Validation Loss')
-plt.title(f"Loss Trend Across Epochs")
+plt.title("Loss Trend Across Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
