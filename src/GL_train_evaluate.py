@@ -25,7 +25,7 @@ output_dim = 10  # The output are the digits 0-9
 hidden_nodes = 32  # 32 64, 128, 256, 512
 batch_size = 32
 epochs = 150
-gl_threshold = 2  # Generalization loss threshold in %
+gl_alpha = 2  # Generalization loss threshold in %
 
 
 results = []
@@ -34,7 +34,7 @@ start_time = time.time()
 model = create_model(input_dim, hidden_nodes, output_dim)
 
 # Initialize variables for GL early stopping
-best_val_loss = np.inf  # Tracks the best validation loss seen so far
+best_val_loss = np.inf  # Tracks the best validation loss
 history = {'val_accuracy': [], 'loss': [], 'val_loss': [], 'accuracy': [], 'precision': [], 'recall': [], 'mse': []}
 
 for epoch in range(epochs):
@@ -74,13 +74,11 @@ for epoch in range(epochs):
     generalization_loss = 100 * (val_loss / best_val_loss - 1)
     print(f"Generalization Loss (GL): {generalization_loss:.2f}%")
     
-    if generalization_loss > gl_threshold:
-        print(f"Generalization Loss exceeded the threshold ({gl_threshold}%), stopping training.")
+    if generalization_loss > gl_alpha:
+        print(f"Generalization Loss exceeded the threshold ({gl_alpha}%), stopping training.")
         break
 
 time_taken = time.time() - start_time
-
-# Track the number of the last completed epoch
 last_epoch = epoch + 1
 
 # Evaluate on test data
@@ -108,10 +106,10 @@ print(f"  MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}")
 print(f"  Time Taken: {time_taken:.2f} seconds")
 print(f"  Last Epoch: {last_epoch}")
 
-# Save metrics to a file
+# Save metrics
 experiment_name = f"GL_alpha_2_hn_{hidden_nodes}"
-filename_txt = f"./results/metrics/{experiment_name}.txt"
 
+filename_txt = f"./results/metrics/GL/{experiment_name}.txt"
 with open(filename_txt, 'w') as result_file:
     result_file.write("=====================\n")
     result_file.write(f"Hidden Layer Nodes: {hidden_nodes}\n")
@@ -130,5 +128,5 @@ plt.title("Loss Trend Across Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig(f'./results/plots/{experiment_name}.png')
+plt.savefig(f'./results/plots/GL/{experiment_name}.png')
 plt.show()
