@@ -25,8 +25,8 @@ output_dim = 10
 hidden_nodes = 32
 batch_size = 32
 epochs = 150
-pq_alpha = 2  # Progressive quitting stopping threshold
-training_strip_length = 5  # Length of training strips to calculte progress
+pq_alpha = 2  # Progressive quitting stopping threshold in %
+training_strip_length = 5  # =k length of training strips to calculate progress
 
 results = []
 start_time = time.time()
@@ -36,9 +36,7 @@ model = create_model(input_dim, hidden_nodes, output_dim)
 # Initialize variables for PQ early stopping
 best_val_loss = np.inf  # Tracks best validation loss
 history = {'val_accuracy': [], 'loss': [], 'val_loss': [], 'accuracy': [], 'precision': [], 'recall': [], 'mse': []}
-
-# Calculate training progress (PQ) variables
-training_strip_losses = []
+training_strip_losses = []  # To later alculate training progress (P_k)
 
 for epoch in range(epochs):
     print(f"\nEpoch {epoch + 1}/{epochs}")
@@ -71,31 +69,31 @@ for epoch in range(epochs):
     history['precision'].append(val_precision)
     history['recall'].append(val_recall)
     history['mse'].append(val_mse)
-    
 
     # Update the strip losses
     training_strip_losses.append(train_loss)
 
-    # Ensure strip has `training_strip_length` elements
+    # When the strip already has k elements it deletes the oldest loss [0]
     if len(training_strip_losses) > training_strip_length:
         training_strip_losses.pop(0)
 
     # Compute training progress
     if len(training_strip_losses) == training_strip_length:
         min_loss_in_strip = min(training_strip_losses)
-        avg_loss_in_strip = np.mean(training_strip_losses)
-        progress = 1000 * (avg_loss_in_strip / min_loss_in_strip - 1)
+        avg_loss_in_strip = sum(training_strip_losses) / training_strip_length
+        P_k = 1000 * (avg_loss_in_strip / min_loss_in_strip - 1)  # Training progress
 
         # Calculate PQ
-        pq = generalization_loss / progress if progress > 0 else np.inf
-        print(f"Generalization Loss: {generalization_loss:.2f}% | Training Progress: {progress:.2f} | PQ: {pq:.2f}")
+        generalization_loss = 100 * (val_loss / min_loss_in_strip - 1)
+        pq = generalization_loss / P_k
+        print(f"Generalization Loss: {generalization_loss:.2f}% | Training Progress: {P_k:.2f} | PQ: {pq:.2f}")
 
         # Stop if PQ exceeds threshold
         if pq > pq_alpha:
             print(f"PQ exceeded threshold ({pq_alpha}), stopping training.")
             break
 
-    best_val_loss = min(best_val_loss, val_loss)
+    #best_val_loss = min(best_val_loss, val_loss)
 
 time_taken = time.time() - start_time
 last_epoch = epoch + 1

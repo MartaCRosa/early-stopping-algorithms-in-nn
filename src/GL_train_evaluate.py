@@ -70,7 +70,7 @@ for epoch in range(epochs):
     history['mse'].append(val_mse)
     
     # Generalization loss calculation according to the article
-    best_val_loss = min(best_val_loss, val_loss)
+    best_val_loss = min(best_val_loss, val_loss)  # See if current validation loss is lower than the lowest until now
     generalization_loss = 100 * (val_loss / best_val_loss - 1)
     print(f"Generalization Loss (GL): {generalization_loss:.2f}%")
     
@@ -107,7 +107,7 @@ print(f"  Time Taken: {time_taken:.2f} seconds")
 print(f"  Last Epoch: {last_epoch}")
 
 # Save metrics
-experiment_name = f"GL_alpha_2_hn_{hidden_nodes}"
+experiment_name = f"GL_alpha_{gl_alpha}_hn_{hidden_nodes}"
 
 filename_txt = f"./results/metrics/GL/{experiment_name}.txt"
 with open(filename_txt, 'w') as result_file:
