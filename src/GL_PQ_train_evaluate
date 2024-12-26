@@ -25,7 +25,8 @@ output_dim = 10
 hidden_nodes = 128  # 32 64, 128, 256, 512
 batch_size = 32
 epochs = 150
-pq_alpha = 0.5  # Progressive quitting stopping threshold in %  0.5  1.5  2.5
+gl_alpha = 1  # Generalization loss threshold in  %  1  1  2.5
+pq_alpha = 0.5  # Progressive quitting stopping threshold in  %  0.5  1.5  2.5
 training_strip_length = 5  # =k length of training strips to calculate progress
 
 results = []
@@ -83,14 +84,17 @@ for epoch in range(epochs):
         avg_loss_in_strip = sum(training_strip_losses) / training_strip_length
         P_k = 1000 * (avg_loss_in_strip / min_loss_in_strip - 1)  # Training progress
 
-        # Calculate PQ
+        # Calculate GL and PQ
         generalization_loss = 100 * (val_loss / min_loss_in_strip - 1)
         pq = generalization_loss / P_k
         print(f"Generalization Loss: {generalization_loss:.2f}% | Training Progress: {P_k:.2f} | PQ: {pq:.2f}")
 
-        # Stop if PQ exceeds threshold
+        # Stop if PQ or GL exceeds threshold
         if pq > pq_alpha:
-            print(f"PQ exceeded threshold ({pq_alpha}), stopping training.")
+            print(f"PQ exceeded threshold ({pq_alpha}%), stopping training.")
+            break
+        if generalization_loss > gl_alpha:
+            print(f"GL exceeded the threshold ({gl_alpha}%), stopping training.")
             break
 
     #best_val_loss = min(best_val_loss, val_loss)
@@ -124,9 +128,9 @@ print(f"  Time Taken: {time_taken:.2f} seconds")
 print(f"  Last Epoch: {last_epoch}")
 
 # Save metrics
-experiment_name = f"PQ_alpha_{pq_alpha}_hn_{hidden_nodes}"
+experiment_name = f"GL_PQ_alpha_{pq_alpha}_hn_{hidden_nodes}"
 
-filename_txt = f"./results/metrics/PQ/{experiment_name}.txt"
+filename_txt = f"./results/metrics/GL_PQ/{experiment_name}.txt"
 with open(filename_txt, 'w') as result_file:
     result_file.write("=====================\n")
     result_file.write(f"Hidden Layer Nodes: {hidden_nodes}\n")
@@ -146,5 +150,5 @@ plt.title("Loss Trend Across Epochs")
 plt.xlabel("Epochs")
 plt.ylabel("Loss")
 plt.legend()
-plt.savefig(f'./results/plots/PQ/{experiment_name}.png')
+plt.savefig(f'./results/plots/GL_PQ/{experiment_name}.png')
 plt.show()

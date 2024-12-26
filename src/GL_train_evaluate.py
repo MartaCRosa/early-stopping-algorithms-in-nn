@@ -25,7 +25,7 @@ output_dim = 10  # The output are the digits 0-9
 hidden_nodes = 32  # 32 64, 128, 256, 512
 batch_size = 32
 epochs = 150
-gl_alpha = 2  # Generalization loss threshold in %
+gl_alpha = 0.5  # Generalization loss threshold in  %  0.5  1.5  2.5
 
 
 results = []
@@ -99,15 +99,31 @@ mse_std = np.std(history['mse'])
 
 # Print the results
 print(f"\nResults for {hidden_nodes} hidden nodes:")
-print(f"  Accuracy ~ Std: {accuracy:.4f} ~ {accuracy_std:.4f}")
-print(f"  Precision ~ Std: {precision:.4f} ~ {precision_std:.4f}")
-print(f"  Recall ~ Std: {recall:.4f} ~ {recall_std:.4f}")
-print(f"  MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}")
+print(f"  Accuracy - Std: {accuracy:.4f} - {accuracy_std:.4f}")
+print(f"  Precision - Std: {precision:.4f} - {precision_std:.4f}")
+print(f"  Recall - Std: {recall:.4f} - {recall_std:.4f}")
+print(f"  MSE - Std: {mse:.4f} - {mse_std:.4f}")
 print(f"  Time Taken: {time_taken:.2f} seconds")
 print(f"  Last Epoch: {last_epoch}")
 
 # Save metrics
 experiment_name = f"GL_alpha_{gl_alpha}_hn_{hidden_nodes}"
+
+"""
+filename_npy = f"./results/metrics/GL/{experiment_name}.npy"
+results.append({
+    'accuracy': accuracy,
+    'accuracy std': accuracy_std
+    'precision': precision,
+    'precision std': precision_std
+    'recall': recall,
+    'recall std': recall_std
+    'mse': mse,
+    'mse std':
+    'time': time_taken
+})
+np.save(filename_npy, results)
+"""
 
 filename_txt = f"./results/metrics/GL/{experiment_name}.txt"
 with open(filename_txt, 'w') as result_file:
@@ -115,10 +131,10 @@ with open(filename_txt, 'w') as result_file:
     result_file.write(f"Hidden Layer Nodes: {hidden_nodes}\n")
     result_file.write(f"Time Taken: {time_taken:.2f} seconds\n")
     result_file.write(f"Last Epoch: {last_epoch}\n")
-    result_file.write(f"Accuracy ~ Std: {accuracy:.4f} ~ {accuracy_std:.4f}\n")
-    result_file.write(f"Precision ~ Std: {precision:.4f} ~ {precision_std:.4f}\n")
-    result_file.write(f"Recall ~ Std: {recall:.4f} ~ {recall_std:.4f}\n")
-    result_file.write(f"MSE ~ Std: {mse:.4f} ~ {mse_std:.4f}\n")
+    result_file.write(f"Accuracy - Std: {accuracy:.4f} - {accuracy_std:.4f}\n")
+    result_file.write(f"Precision - Std: {precision:.4f} - {precision_std:.4f}\n")
+    result_file.write(f"Recall - Std: {recall:.4f} - {recall_std:.4f}\n")
+    result_file.write(f"MSE - Std: {mse:.4f} - {mse_std:.4f}\n")
 
 # Plot Error Trends
 plt.figure(figsize=(10, 6))
