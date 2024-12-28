@@ -1,5 +1,5 @@
 import numpy as np
-from keras.utils import to_categorical
+from keras.utils import to_categorical # type: ignore
 from model import create_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, mean_squared_error
 import matplotlib.pyplot as plt
@@ -19,29 +19,30 @@ y_train = to_categorical(y_train, num_classes=10)
 y_val = to_categorical(y_val, num_classes=10)
 y_test = to_categorical(y_test, num_classes=10)
 
-input_dim = x_train.shape[1]
-output_dim = 10
+input_dim = x_train.shape[1]  # The input of the NN is the training data shaped in 1D
+output_dim = 10  # The output are the digits 0-9
 
-hidden_nodes = 128  # 32 64, 128, 256, 512
+hidden_nodes = 16  # 16, 32, 64, 128, 256, 512
 batch_size = 32
 epochs = 150
 gl_alpha = 1  # Generalization loss threshold in  %  1  1  2.5
-pq_alpha = 0.5  # Progressive quitting stopping threshold in  %  0.5  1.5  2.5
+pq_alpha = 0.03  # Generalization loss threshold in  %  0.03  0.06  0.1
 training_strip_length = 5  # =k length of training strips to calculate progress
+
 
 results = []
 start_time = time.time()
 
 model = create_model(input_dim, hidden_nodes, output_dim)
 
-# Initialize variables for PQ early stopping
-best_val_loss = np.inf  # Tracks best validation loss
+# Initialize variables for GL early stopping
+best_val_loss = np.inf  # Tracks the best validation loss
+training_strip_losses = []  # To later calculate training progress (P_k)
 history = {'val_accuracy': [], 'loss': [], 'val_loss': [], 'accuracy': [], 'precision': [], 'recall': [], 'mse': []}
-training_strip_losses = []  # To later alculate training progress (P_k)
 
 for epoch in range(epochs):
     print(f"\nEpoch {epoch + 1}/{epochs}")
-
+    
     # Train for each epoch
     train_history = model.fit(
         x_train, y_train,
@@ -50,8 +51,8 @@ for epoch in range(epochs):
         validation_data=(x_val, y_val),
         verbose=1
     )
-
-    # Retrieve loss values
+    
+    # Retrieve current metrics from the model
     train_loss = train_history.history['loss'][0]
     val_loss = train_history.history['val_loss'][0]
     val_acc = train_history.history['val_accuracy'][0]
@@ -62,7 +63,7 @@ for epoch in range(epochs):
     val_precision = precision_score(val_true, val_preds, average='weighted')
     val_recall = recall_score(val_true, val_preds, average='weighted')
     val_mse = mean_squared_error(val_true, val_preds)
-
+    
     # Append to history
     history['loss'].append(train_loss)
     history['val_loss'].append(val_loss)
@@ -70,7 +71,11 @@ for epoch in range(epochs):
     history['precision'].append(val_precision)
     history['recall'].append(val_recall)
     history['mse'].append(val_mse)
-
+    
+    # Generalization loss calculation according to the article
+    best_val_loss = min(best_val_loss, val_loss)  # See if current validation loss is lower than the lowest until now
+    generalization_loss = 100 * (val_loss / best_val_loss - 1)
+    
     # Update the strip losses
     training_strip_losses.append(train_loss)
 
@@ -84,25 +89,22 @@ for epoch in range(epochs):
         avg_loss_in_strip = sum(training_strip_losses) / training_strip_length
         P_k = 1000 * (avg_loss_in_strip / min_loss_in_strip - 1)  # Training progress
 
-        # Calculate GL and PQ
-        generalization_loss = 100 * (val_loss / min_loss_in_strip - 1)
-        pq = generalization_loss / P_k
+        # Calculate PQ
+        pq = generalization_loss / P_k if P_k > 0 else np.inf
         print(f"Generalization Loss: {generalization_loss:.2f}% | Training Progress: {P_k:.2f} | PQ: {pq:.2f}")
 
         # Stop if PQ or GL exceeds threshold
-        if pq > pq_alpha:
-            print(f"PQ exceeded threshold ({pq_alpha}%), stopping training.")
-            break
         if generalization_loss > gl_alpha:
             print(f"GL exceeded the threshold ({gl_alpha}%), stopping training.")
             break
-
-    #best_val_loss = min(best_val_loss, val_loss)
+        if pq > pq_alpha:
+            print(f"PQ exceeded the threshold ({pq_alpha}%), stopping training.")
+            break
 
 time_taken = time.time() - start_time
 last_epoch = epoch + 1
 
-# Evaluate the model
+# Evaluate on test data
 y_pred = model.predict(x_test)
 y_pred_labels = np.argmax(y_pred, axis=1)
 y_test_labels = np.argmax(y_test, axis=1)
@@ -120,15 +122,16 @@ mse_std = np.std(history['mse'])
 
 # Print the results
 print(f"\nResults for {hidden_nodes} hidden nodes:")
+print(f"  Time Taken: {time_taken:.2f} seconds")
+print(f"  Last Epoch: {last_epoch}")
+print(f"  Last GL: {generalization_loss:.2f}")
 print(f"  Accuracy - Std: {accuracy:.4f} - {accuracy_std:.4f}")
 print(f"  Precision - Std: {precision:.4f} - {precision_std:.4f}")
 print(f"  Recall - Std: {recall:.4f} - {recall_std:.4f}")
 print(f"  MSE - Std: {mse:.4f} - {mse_std:.4f}")
-print(f"  Time Taken: {time_taken:.2f} seconds")
-print(f"  Last Epoch: {last_epoch}")
 
 # Save metrics
-experiment_name = f"GL_PQ_alpha_{pq_alpha}_hn_{hidden_nodes}"
+experiment_name = f"GL_alpha_{pq_alpha}_hn_{hidden_nodes}"
 
 filename_txt = f"./results/metrics/GL_PQ/{experiment_name}.txt"
 with open(filename_txt, 'w') as result_file:

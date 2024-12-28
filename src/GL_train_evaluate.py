@@ -1,5 +1,5 @@
 import numpy as np
-from keras.utils import to_categorical
+from keras.utils import to_categorical # type: ignore
 from model import create_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, mean_squared_error
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ y_test = to_categorical(y_test, num_classes=10)
 input_dim = x_train.shape[1]  # The input of the NN is the training data shaped in 1D
 output_dim = 10  # The output are the digits 0-9
 
-hidden_nodes = 32  # 32 64, 128, 256, 512
+hidden_nodes = 16  # 16, 32, 64, 128, 256, 512
 batch_size = 32
 epochs = 150
 gl_alpha = 0.5  # Generalization loss threshold in  %  0.5  1.5  2.5
@@ -99,31 +99,15 @@ mse_std = np.std(history['mse'])
 
 # Print the results
 print(f"\nResults for {hidden_nodes} hidden nodes:")
+print(f"  Time Taken: {time_taken:.2f} seconds")
+print(f"  Last Epoch: {last_epoch}")
 print(f"  Accuracy - Std: {accuracy:.4f} - {accuracy_std:.4f}")
 print(f"  Precision - Std: {precision:.4f} - {precision_std:.4f}")
 print(f"  Recall - Std: {recall:.4f} - {recall_std:.4f}")
 print(f"  MSE - Std: {mse:.4f} - {mse_std:.4f}")
-print(f"  Time Taken: {time_taken:.2f} seconds")
-print(f"  Last Epoch: {last_epoch}")
 
 # Save metrics
 experiment_name = f"GL_alpha_{gl_alpha}_hn_{hidden_nodes}"
-
-"""
-filename_npy = f"./results/metrics/GL/{experiment_name}.npy"
-results.append({
-    'accuracy': accuracy,
-    'accuracy std': accuracy_std
-    'precision': precision,
-    'precision std': precision_std
-    'recall': recall,
-    'recall std': recall_std
-    'mse': mse,
-    'mse std':
-    'time': time_taken
-})
-np.save(filename_npy, results)
-"""
 
 filename_txt = f"./results/metrics/GL/{experiment_name}.txt"
 with open(filename_txt, 'w') as result_file:
