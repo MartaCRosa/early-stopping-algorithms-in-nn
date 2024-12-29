@@ -22,10 +22,10 @@ y_test = to_categorical(y_test, num_classes=10)
 input_dim = x_train.shape[1]  # The input of the NN is the training data shaped in 1D
 output_dim = 10  # The output are the digits 0-9
 
-hidden_nodes = 32  # 16, 32, 64, 128, 256, 512
+hidden_nodes = 16  # 16, 32, 64, 128, 256
 batch_size = 32
 epochs = 150
-pq_alpha = 0.03  # Generalization loss threshold in  %  0.03  0.06  0.1
+pq_alpha = 0.12  # PQ threshold in  %  0.02  0.05  0.09  0.12
 training_strip_length = 5  # =k length of training strips to calculate progress
 
 
@@ -126,7 +126,7 @@ print(f"  Recall - Std: {recall:.4f} - {recall_std:.4f}")
 print(f"  MSE - Std: {mse:.4f} - {mse_std:.4f}")
 
 # Save metrics
-experiment_name = f"GL_alpha_{pq_alpha}_hn_{hidden_nodes}"
+experiment_name = f"PQ_alpha_{pq_alpha}_hn_{hidden_nodes}"
 
 filename_txt = f"./results/metrics/PQ/{experiment_name}.txt"
 with open(filename_txt, 'w') as result_file:
@@ -134,7 +134,7 @@ with open(filename_txt, 'w') as result_file:
     result_file.write(f"Hidden Layer Nodes: {hidden_nodes}\n")
     result_file.write(f"Time Taken: {time_taken:.2f} seconds\n")
     result_file.write(f"Last Epoch: {last_epoch}\n")
-    result_file.write(f"Last GL: {generalization_loss}\n")
+    result_file.write(f"Last GL: {generalization_loss:.2f}\n")
     result_file.write(f"Accuracy - Std: {accuracy:.4f} - {accuracy_std:.4f}\n")
     result_file.write(f"Precision - Std: {precision:.4f} - {precision_std:.4f}\n")
     result_file.write(f"Recall - Std: {recall:.4f} - {recall_std:.4f}\n")

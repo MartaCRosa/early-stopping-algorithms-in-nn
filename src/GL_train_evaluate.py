@@ -22,10 +22,10 @@ y_test = to_categorical(y_test, num_classes=10)
 input_dim = x_train.shape[1]  # The input of the NN is the training data shaped in 1D
 output_dim = 10  # The output are the digits 0-9
 
-hidden_nodes = 16  # 16, 32, 64, 128, 256, 512
+hidden_nodes = 64  # 16, 32, 64, 128, 256, (512)
 batch_size = 32
 epochs = 150
-gl_alpha = 0.5  # Generalization loss threshold in  %  0.5  1.5  2.5
+gl_alpha = 8  # GL threshold in  %  (0.5)  1.5  2.5  5  8
 
 
 results = []
