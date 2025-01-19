@@ -1,5 +1,5 @@
 import numpy as np
-from keras.utils import to_categorical 
+from keras.utils import to_categorical # type: ignore
 from model_research import create_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, mean_squared_error
 import matplotlib.pyplot as plt
